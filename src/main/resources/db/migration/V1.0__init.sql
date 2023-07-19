@@ -3,6 +3,7 @@ CREATE TABLE user (
                       id BIGINT PRIMARY KEY AUTO_INCREMENT,
                       name VARCHAR(100) NOT NULL,
                       email VARCHAR(100) NOT NULL UNIQUE,
+                      password VARCHAR(100) NOT NULL,
                       active BOOLEAN NOT NULL,
                       role VARCHAR(20) NOT NULL
 );
@@ -30,31 +31,22 @@ CREATE TABLE booking (
 );
 
 -- User table entries:
-INSERT INTO user (name, email, active, role)
-VALUES ('John Doe', 'john@example.com', true, 'USER');
-
-INSERT INTO user (name, email, active, role)
-VALUES ('Jane Smith', 'jane@example.com', true, 'ADMIN');
-
-INSERT INTO user (name, email, active, role)
-VALUES ('Michael Johnson', 'michael@example.com', true, 'USER');
+INSERT INTO user (name, email, password, active, role)
+VALUES
+    ('John Doe', 'john@example.com', 'password', true, 'USER'),
+    ('Jane Smith', 'jane@example.com', 'password', true, 'ADMIN'),
+    ('Michael Johnson', 'michael@example.com', 'password', true, 'USER');
 
 -- Service table entries:
 INSERT INTO service (userId, name, description, cost, active)
-VALUES (1, 'Web Development', 'Custom web development services', '500', true);
-
-INSERT INTO service (userId, name, description, cost, active)
-VALUES (2, 'Mobile App Development', 'Native and cross-platform mobile app development', '1000', true);
-
-INSERT INTO service (userId, name, description, cost, active)
-VALUES (3, 'Graphic Design', 'Logo design, branding, and visual identity services', '250', true);
+VALUES
+    (1, 'Web Development', 'Custom web development services', '500', true),
+    (2, 'Mobile App Development', 'Native and cross-platform mobile app development', '1000', true),
+    (3, 'Graphic Design', 'Logo design, branding, and visual identity services', '250', true);
 
 -- Booking table entries:
 INSERT INTO booking (userId, serviceId, dateTime, notes)
-VALUES (1, 1, '2023-07-15 10:00:00', 'Need website development for my business');
-
-INSERT INTO booking (userId, serviceId, dateTime, notes)
-VALUES (2, 2, '2023-07-16 14:30:00', 'Looking to develop an iOS and Android app');
-
-INSERT INTO booking (userId, serviceId, dateTime, notes)
-VALUES (3, 3, '2023-07-17 11:15:00', 'Require a new logo for my startup');
+VALUES
+    (1, 1, '2023-07-15 10:00:00', 'Need website development for my business'),
+    (2, 2, '2023-07-16 14:30:00', 'Looking to develop an iOS and Android app'),
+    (3, 3, '2023-07-17 11:15:00', 'Require a new logo for my startup');
