@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  service-application-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: serviceapplication
+      MYSQL_DATABASE: servicedatabase
+      MYSQL_USER: sqluser
+      MYSQL_PASSWORD: sqlpassword
+    ports:
+      - 3306:3306
+
+  service-application-auth:
+    image: quay.io/keycloak/keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: adminpassword
+    command:
+      - start-dev
+      - "--import-realm"
+    volumes:
+      - ./export.json:/opt/keycloak/data/import/realm.json
