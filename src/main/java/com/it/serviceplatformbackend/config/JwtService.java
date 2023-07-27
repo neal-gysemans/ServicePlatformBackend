@@ -1,5 +1,6 @@
 package com.it.serviceplatformbackend.config;
 
+import com.it.serviceplatformbackend.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +37,11 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        User user = (User) userDetails;
+        String role = getRoleFromUser(user);
+
+        extraClaims.put("role", role);
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -44,6 +50,10 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact(); // valid for 1 day
+    }
+
+    private String getRoleFromUser(User user) {
+        return user.getRole().name();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

@@ -1,10 +1,13 @@
 package com.it.serviceplatformbackend.service.query;
 
 import com.it.serviceplatformbackend.domain.ApplicationService;
+import com.it.serviceplatformbackend.domain.Booking;
 import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.dto.ApplicationServiceAndUserResponse;
+import com.it.serviceplatformbackend.dto.BookingResponse;
 import com.it.serviceplatformbackend.dto.UserResponse;
-import com.it.serviceplatformbackend.repository.ApplicationServiceRepository;
+
+import com.it.serviceplatformbackend.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,32 +16,39 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ApplicationServiceQueryService {
-    private final ApplicationServiceRepository applicationServiceRepository;
+public class BookingQueryService {
+    private final BookingRepository bookingRepository;
 
-    public List<ApplicationServiceAndUserResponse> getAllServices() {
-        return applicationServiceRepository.findAll()
+    public List<BookingResponse> getPersonalBookings(String userEmail) {
+        return bookingRepository.findByUserEmail(userEmail)
                 .stream()
-                .map(this::ApplicationServiceAndUserResponseBuilder)
+                .map(this::BookingResponseBuilder)
                 .collect(Collectors.toList());
     }
 
-    public List<ApplicationServiceAndUserResponse> getPersonalServices(String userEmail) {
-        return applicationServiceRepository.findByUserEmail(userEmail)
-                .stream()
-                .map(this::ApplicationServiceAndUserResponseBuilder)
-                .collect(Collectors.toList());
-    }
+    private BookingResponse BookingResponseBuilder(Booking booking) {
+        UserResponse booker = UserResponseBuilder(booking.getUser());
+        ApplicationServiceAndUserResponse applicationServiceAndUserResponse =
+                ApplicationServiceAndUserResponseBuilder(booking.getApplicationService());
 
+        return BookingResponse.builder()
+                .id(booking.getId())
+                .notes(booking.getNotes())
+                .date_time(booking.getDateTime())
+                .booked_service(applicationServiceAndUserResponse)
+                .booker(booker)
+                .build();
+    }
 
     private ApplicationServiceAndUserResponse ApplicationServiceAndUserResponseBuilder(ApplicationService applicationService) {
-        UserResponse userResponse = UserResponseBuilder(applicationService.getUser());
+        UserResponse serviceProvider = UserResponseBuilder(applicationService.getUser());
+
         return ApplicationServiceAndUserResponse.builder()
                 .id(applicationService.getId())
                 .name(applicationService.getName())
                 .cost(applicationService.getCost())
                 .description(applicationService.getDescription())
-                .serviceProvider(userResponse)
+                .serviceProvider(serviceProvider)
                 .build();
     }
 
