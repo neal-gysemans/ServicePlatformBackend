@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class BookingResponse {
+public class CreatedBookingResponse {
     private long id;
     private String notes;
     private LocalDateTime date_time;
     private UserResponse booker;
-    private ApplicationServiceAndUserResponse booked_service;
+    private ApplicationServiceResponse booked_service;
 }

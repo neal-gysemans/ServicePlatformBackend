@@ -1,12 +1,15 @@
 package com.it.serviceplatformbackend.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
