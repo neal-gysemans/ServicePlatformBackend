@@ -1,10 +1,13 @@
 package com.it.serviceplatformbackend.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "service")
 public class ApplicationService {
     @Id
