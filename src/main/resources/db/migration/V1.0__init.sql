@@ -14,7 +14,7 @@ CREATE TABLE service (
                          user_id BIGINT NOT NULL,
                          name VARCHAR(100) NOT NULL,
                          description VARCHAR(500) NOT NULL,
-                         cost VARCHAR(50) NOT NULL,
+                         cost float NOT NULL,
                          active BOOLEAN NOT NULL,
                          FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -40,9 +40,9 @@ VALUES
 -- Service table entries:
 INSERT INTO service (user_id, name, description, cost, active)
 VALUES
-    (1, 'Web Development', 'Custom web development services', '500', true),
-    (2, 'Mobile App Development', 'Native and cross-platform mobile app development', '1000', true),
-    (3, 'Graphic Design', 'Logo design, branding, and visual identity services', '250', true);
+    (1, 'Web Development', 'Custom web development services', 500, true),
+    (2, 'Mobile App Development', 'Native and cross-platform mobile app development', 1000, true),
+    (3, 'Graphic Design', 'Logo design, branding, and visual identity services', 250, true);
 
 -- Booking table entries:
 INSERT INTO booking (user_id, application_service_id, date_time, notes)

@@ -3,6 +3,7 @@ package com.it.serviceplatformbackend.controller;
 import com.it.serviceplatformbackend.auth.AuthenticationService;
 import com.it.serviceplatformbackend.domain.Booking;
 import com.it.serviceplatformbackend.dto.BookingResponse;
+import com.it.serviceplatformbackend.dto.CreateBookingCommand;
 import com.it.serviceplatformbackend.dto.CreatedBookingResponse;
 import com.it.serviceplatformbackend.service.command.BookingCommandService;
 import com.it.serviceplatformbackend.service.query.BookingQueryService;
@@ -32,9 +33,9 @@ public class BookingController {
         return new ResponseEntity<>(personalBookings, HttpStatus.OK);
     }
 
-    @PostMapping("/create/{serviceId}")
-    public ResponseEntity<CreatedBookingResponse> createBooking(@PathVariable Long serviceId, HttpServletRequest request) {
-        CreatedBookingResponse newBooking = bookingCommandService.createBooking(serviceId, request);
+    @PostMapping("/create")
+    public ResponseEntity<CreatedBookingResponse> createBooking(@RequestBody CreateBookingCommand createBookingCommand, HttpServletRequest request) {
+        CreatedBookingResponse newBooking = bookingCommandService.createBooking(createBookingCommand, request);
         return new ResponseEntity<>(newBooking, HttpStatus.CREATED);
     }
 

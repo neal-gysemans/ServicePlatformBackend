@@ -8,5 +8,5 @@ import lombok.Getter;
 public class ApplicationServiceResponse {
     private String name;
     private String description;
-    private String cost;
+    private float cost;
 }
