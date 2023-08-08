@@ -5,7 +5,7 @@ import com.it.serviceplatformbackend.domain.ApplicationService;
 import com.it.serviceplatformbackend.domain.Booking;
 import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.dto.ApplicationServiceResponse;
-import com.it.serviceplatformbackend.dto.BookingResponse;
+import com.it.serviceplatformbackend.dto.CreateBookingCommand;
 import com.it.serviceplatformbackend.dto.CreatedBookingResponse;
 import com.it.serviceplatformbackend.dto.UserResponse;
 import com.it.serviceplatformbackend.repository.ApplicationServiceRepository;
@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -28,42 +27,44 @@ public class BookingCommandService {
     private final ApplicationServiceRepository applicationServiceRepository;
 
 
-    public CreatedBookingResponse createBooking(Long serviceId, HttpServletRequest request) {
+    public CreatedBookingResponse createBooking(CreateBookingCommand createBookingCommand, HttpServletRequest request) {
         User serviceBooker = userRepository.findByEmail(authenticationService.getEmailFromToken(request))
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
 
-        ApplicationService bookedService = applicationServiceRepository.findById(serviceId)
+        ApplicationService bookedService = applicationServiceRepository.findById(createBookingCommand.getBooked_service_id())
                 .orElseThrow(() -> new EntityNotFoundException("Service not found."));
 
         Booking booking = Booking.builder()
                 .applicationService(bookedService)
                 .user(serviceBooker)
-                .dateTime(LocalDateTime.now())
+                .dateTime(createBookingCommand.getDate_time())
+                .notes(createBookingCommand.getNotes())
                 .build();
 
         bookingRepository.save(booking);
 
-        CreatedBookingResponse bookingResponse = getCreatedBookingResponse(serviceBooker, bookedService, booking);
+        CreatedBookingResponse bookingResponse = getCreatedBookingResponse(booking);
         return bookingResponse;
     }
 
-    private static CreatedBookingResponse getCreatedBookingResponse(User serviceBooker, ApplicationService bookedService, Booking booking) {
+    private static CreatedBookingResponse getCreatedBookingResponse(Booking booking) {
         // Building the response
         UserResponse userResponse = UserResponse.builder()
-                .name(serviceBooker.getName())
-                .email(serviceBooker.getEmail())
+                .name(booking.getUser().getName())
+                .email(booking.getUser().getEmail())
                 .build();
 
         ApplicationServiceResponse applicationServiceResponse = ApplicationServiceResponse.builder()
-                .description(bookedService.getDescription())
-                .name(bookedService.getName())
-                .cost(bookedService.getCost())
+                .description(booking.getApplicationService().getDescription())
+                .name(booking.getApplicationService().getName())
+                .cost(booking.getApplicationService().getCost())
                 .build();
 
         CreatedBookingResponse bookingResponse = CreatedBookingResponse.builder()
                 .booked_service(applicationServiceResponse)
                 .booker(userResponse)
                 .date_time(booking.getDateTime())
+                .notes(booking.getNotes())
                 .build();
         return bookingResponse;
     }

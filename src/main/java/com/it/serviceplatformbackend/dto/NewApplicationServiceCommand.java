@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class NewApplicationServiceCommand {
     private String description;
-    private String cost;
+    private float cost;
     private String name;
 }

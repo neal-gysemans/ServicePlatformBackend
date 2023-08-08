@@ -16,7 +16,7 @@ public class ApplicationService {
 
     private String name;
     private String description;
-    private String cost;
+    private float cost;
     private boolean active;
 
     @ManyToOne
