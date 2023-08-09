@@ -3,6 +3,7 @@ package com.it.serviceplatformbackend.auth;
 import com.it.serviceplatformbackend.config.JwtService;
 import com.it.serviceplatformbackend.domain.Role;
 import com.it.serviceplatformbackend.domain.User;
+import com.it.serviceplatformbackend.exception.InactiveUserException;
 import com.it.serviceplatformbackend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws InactiveUserException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -44,7 +45,12 @@ public class AuthenticationService {
         // if this code gets executed, user is authenticated
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
+
+        if (!user.isActive()) {
+            throw new InactiveUserException("User is not active");
+        }
         var jwtToken = jwtService.generateToken(user);
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
