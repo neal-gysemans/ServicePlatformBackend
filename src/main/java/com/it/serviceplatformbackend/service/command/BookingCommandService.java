@@ -68,4 +68,13 @@ public class BookingCommandService {
                 .build();
         return bookingResponse;
     }
+
+    public boolean deleteBookingById(long id) {
+        try {
+            bookingRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

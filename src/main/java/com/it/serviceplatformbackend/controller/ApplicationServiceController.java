@@ -1,8 +1,12 @@
 package com.it.serviceplatformbackend.controller;
 
 import com.it.serviceplatformbackend.auth.AuthenticationService;
+import com.it.serviceplatformbackend.domain.ApplicationService;
 import com.it.serviceplatformbackend.dto.ApplicationServiceAndUserResponse;
 import com.it.serviceplatformbackend.dto.NewApplicationServiceCommand;
+import com.it.serviceplatformbackend.dto.UpdateApplicationServiceCommand;
+import com.it.serviceplatformbackend.dto.UserResponse;
+import com.it.serviceplatformbackend.repository.ApplicationServiceRepository;
 import com.it.serviceplatformbackend.service.command.ApplicationServiceCommandService;
 import com.it.serviceplatformbackend.service.query.ApplicationServiceQueryService;
 import jakarta.annotation.security.RolesAllowed;
@@ -24,6 +28,7 @@ public class ApplicationServiceController {
     private final ApplicationServiceQueryService applicationServiceQueryService;
     private final AuthenticationService authenticationService;
     private final ApplicationServiceCommandService applicationServiceCommandService;
+    private final ApplicationServiceRepository applicationServiceRepository;
 
     @GetMapping("/all")
     public ResponseEntity<List<ApplicationServiceAndUserResponse>> getAllApplicationServices() {
@@ -54,5 +59,53 @@ public class ApplicationServiceController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // You can return an error message if needed
         }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApplicationServiceAndUserResponse> deleteApplicationService(@PathVariable long id) {
+        // Call the service to delete the ApplicationService by its ID
+        boolean deletionResult = applicationServiceCommandService.deleteApplicationServiceById(id);
+
+        if (deletionResult) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PutMapping("/update")
+    public ResponseEntity<ApplicationServiceAndUserResponse> updateApplicationService(
+            @RequestBody UpdateApplicationServiceCommand updateApplicationServiceCommand
+    ) {
+        // Find the service by ID
+        ApplicationService service = applicationServiceRepository.findById(updateApplicationServiceCommand.getId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with id: " + updateApplicationServiceCommand.getId()));
+
+        // make the changes
+        service.setName(updateApplicationServiceCommand.getName());
+        service.setCost(updateApplicationServiceCommand.getCost());
+        service.setDescription(updateApplicationServiceCommand.getDescription());
+
+        // Save the updated service
+        ApplicationService updatedService = applicationServiceRepository.save(service);
+
+        UserResponse userResponse = UserResponse.builder()
+                .id(updatedService.getUser().getId())
+                .email(updatedService.getUser().getEmail())
+                .name(updatedService.getUser().getName())
+                .build();
+
+        // Create and return a ApplicationServiceResponse based on the updated service
+        ApplicationServiceAndUserResponse applicationServiceAndUserResponse = ApplicationServiceAndUserResponse.builder()
+                .id(updatedService.getId())
+                .name(updatedService.getName())
+                .description(updatedService.getDescription())
+                .cost(updatedService.getCost())
+                .serviceProvider(userResponse)
+                .build();
+
+        return ResponseEntity.ok(applicationServiceAndUserResponse);
     }
 }

@@ -4,11 +4,13 @@ import com.it.serviceplatformbackend.config.JwtService;
 import com.it.serviceplatformbackend.domain.Role;
 import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.exception.InactiveUserException;
+import com.it.serviceplatformbackend.exception.InvalidCredentialsException;
 import com.it.serviceplatformbackend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,19 +38,25 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws InactiveUserException {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        ); // throws error if anything is wrong with user
-        // if this code gets executed, user is authenticated
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            // Throw custom exception for invalid credentials
+            throw new InvalidCredentialsException("Invalid login credentials");
+        }
+
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         if (!user.isActive()) {
             throw new InactiveUserException("User is not active");
         }
+
         var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()
