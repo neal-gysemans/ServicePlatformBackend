@@ -39,8 +39,11 @@ public class JwtService {
     ) {
         User user = (User) userDetails;
         String role = getRoleFromUser(user);
+        String name = getNameFromUser(user);
+
 
         extraClaims.put("role", role);
+        extraClaims.put("name", name);
 
         return Jwts
                 .builder()
@@ -50,6 +53,10 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact(); // valid for 1 day
+    }
+
+    private String getNameFromUser(User user) {
+        return user.getName();
     }
 
     private String getRoleFromUser(User user) {
