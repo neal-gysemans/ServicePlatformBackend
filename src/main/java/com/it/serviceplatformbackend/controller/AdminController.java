@@ -10,6 +10,7 @@ import com.it.serviceplatformbackend.repository.ApplicationServiceRepository;
 import com.it.serviceplatformbackend.repository.UserRepository;
 import com.it.serviceplatformbackend.service.command.ApplicationServiceCommandService;
 import com.it.serviceplatformbackend.service.query.UserQueryService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RolesAllowed("ADMIN")
 @RequestMapping("/admin")
 public class AdminController {
     private final ApplicationServiceCommandService applicationServiceCommandService;
