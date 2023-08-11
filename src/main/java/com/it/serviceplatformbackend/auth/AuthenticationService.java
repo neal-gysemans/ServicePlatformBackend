@@ -6,13 +6,16 @@ import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.exception.InactiveUserException;
 import com.it.serviceplatformbackend.exception.InvalidCredentialsException;
 import com.it.serviceplatformbackend.repository.UserRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +26,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This user already exists.");
+        }
+
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
