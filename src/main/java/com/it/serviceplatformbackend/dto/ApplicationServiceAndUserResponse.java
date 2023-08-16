@@ -3,8 +3,6 @@ package com.it.serviceplatformbackend.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.math.BigDecimal;
-
 @Builder
 @Getter
 public class ApplicationServiceAndUserResponse {

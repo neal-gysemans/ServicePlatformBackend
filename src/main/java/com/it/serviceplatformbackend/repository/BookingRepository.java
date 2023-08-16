@@ -4,7 +4,6 @@ import com.it.serviceplatformbackend.domain.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @Repository

@@ -1,7 +1,6 @@
 package com.it.serviceplatformbackend.service.query;
 
 import com.it.serviceplatformbackend.domain.User;
-import com.it.serviceplatformbackend.dto.UserResponse;
 import com.it.serviceplatformbackend.dto.UserStatusResponse;
 import com.it.serviceplatformbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserQueryService {
     private final UserRepository userRepository;
+
     public List<UserStatusResponse> getAllRegularUsers() {
         List<User> users = userRepository.findAllRegularUsers();
         return users.stream()

@@ -1,8 +1,6 @@
 package com.it.serviceplatformbackend.controller;
 
 import com.it.serviceplatformbackend.auth.AuthenticationService;
-import com.it.serviceplatformbackend.domain.Booking;
-import com.it.serviceplatformbackend.dto.ApplicationServiceAndUserResponse;
 import com.it.serviceplatformbackend.dto.BookingResponse;
 import com.it.serviceplatformbackend.dto.CreateBookingCommand;
 import com.it.serviceplatformbackend.dto.CreatedBookingResponse;
@@ -26,9 +24,7 @@ public class BookingController {
 
     @GetMapping("/personal")
     public ResponseEntity<List<BookingResponse>> getPersonalApplicationServices(HttpServletRequest request) {
-        // Get the email from the JWT token in the request
         String email = authenticationService.getEmailFromToken(request);
-        // Call the service method to get the user's personal services
         List<BookingResponse> personalBookings = bookingQueryService.getPersonalBookings(email);
 
         return new ResponseEntity<>(personalBookings, HttpStatus.OK);
@@ -42,7 +38,6 @@ public class BookingController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<BookingResponse> deleteBooking(@PathVariable long id) {
-        // Call the service to delete the booking by its ID
         boolean deletionResult = bookingCommandService.deleteBookingById(id);
 
         if (deletionResult) {

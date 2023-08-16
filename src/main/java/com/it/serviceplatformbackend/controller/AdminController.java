@@ -37,31 +37,24 @@ public class AdminController {
 
     @DeleteMapping("/application-service/delete/{id}")
     public ResponseEntity<ApplicationServiceAndUserResponse> deleteApplicationService(@PathVariable long id) {
-        // Call the service to delete the ApplicationService by its ID
         boolean deletionResult = applicationServiceCommandService.deleteApplicationServiceById(id);
 
         if (deletionResult) {
-            // If deletion was successful, return HTTP status 200 (OK)
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            // If deletion failed, return HTTP status 500 (Internal Server Error)
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/toggle-active/{id}")
     public ResponseEntity<UserStatusResponse> toggleUserActive(@PathVariable long id) {
-        // Find the user by ID
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 
-        // Toggle the active flag
         user.setActive(!user.isActive());
 
-        // Save the updated user
         User updatedUser = userRepository.save(user);
 
-        // Create and return a UserResponse based on the updated user
         UserStatusResponse userStatusResponse = UserStatusResponse.builder()
                 .id(updatedUser.getId())
                 .name(updatedUser.getName())
@@ -75,17 +68,14 @@ public class AdminController {
     public ResponseEntity<ApplicationServiceAndUserResponse> updateApplicationService(
             @RequestBody UpdateApplicationServiceCommand updateApplicationServiceCommand
     ) {
-        // Find the service by ID
         ApplicationService service = applicationServiceRepository.findById(updateApplicationServiceCommand.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User not found with id: " + updateApplicationServiceCommand.getId()));
 
-        // make the changes
         service.setName(updateApplicationServiceCommand.getName());
         service.setCost(updateApplicationServiceCommand.getCost());
         service.setDescription(updateApplicationServiceCommand.getDescription());
 
-        // Save the updated service
         ApplicationService updatedService = applicationServiceRepository.save(service);
 
         UserResponse userResponse = UserResponse.builder()
@@ -94,7 +84,6 @@ public class AdminController {
                 .name(updatedService.getUser().getName())
                 .build();
 
-        // Create and return a ApplicationServiceResponse based on the updated service
         ApplicationServiceAndUserResponse applicationServiceAndUserResponse = ApplicationServiceAndUserResponse.builder()
                 .id(updatedService.getId())
                 .name(updatedService.getName())

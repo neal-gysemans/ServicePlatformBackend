@@ -16,6 +16,20 @@ spring:
         format_sql: true
     database: mysql
 
+#spring:
+#  datasource:
+#    url: "jdbc:sqlserver://serviceplatform.database.windows.net:1433;database=servicePlatformData;user=neal@serviceplatform;password=MoreIT-404;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+#    password: MoreIT-404
+#    username: neal
+#  jpa:
+#    show-sql: false
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    database: sql_server
+#  main:
+#    allow-circular-references: true
+
 
 springdoc:
   swagger-ui:

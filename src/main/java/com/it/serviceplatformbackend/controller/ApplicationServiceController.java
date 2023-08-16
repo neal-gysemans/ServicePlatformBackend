@@ -37,10 +37,7 @@ public class ApplicationServiceController {
 
     @GetMapping("/personal")
     public ResponseEntity<List<ApplicationServiceAndUserResponse>> getPersonalApplicationServices(HttpServletRequest request) {
-        // Get the email from the JWT token in the request
         String email = authenticationService.getEmailFromToken(request);
-        //System.out.println(email);
-        // Call the service method to get the user's personal services
         List<ApplicationServiceAndUserResponse> personalServices = applicationServiceQueryService.getPersonalServices(email);
 
         return new ResponseEntity<>(personalServices, HttpStatus.OK);
@@ -55,15 +52,14 @@ public class ApplicationServiceController {
             ApplicationServiceAndUserResponse createdService = applicationServiceCommandService.createNewApplicationService(newApplicationServiceCommand, request);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdService);
         } catch (EntityExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // You can return an error message if needed
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // You can return an error message if needed
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApplicationServiceAndUserResponse> deleteApplicationService(@PathVariable long id) {
-        // Call the service to delete the ApplicationService by its ID
         boolean deletionResult = applicationServiceCommandService.deleteApplicationServiceById(id);
 
         if (deletionResult) {
@@ -78,17 +74,14 @@ public class ApplicationServiceController {
     public ResponseEntity<ApplicationServiceAndUserResponse> updateApplicationService(
             @RequestBody UpdateApplicationServiceCommand updateApplicationServiceCommand
     ) {
-        // Find the service by ID
         ApplicationService service = applicationServiceRepository.findById(updateApplicationServiceCommand.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User not found with id: " + updateApplicationServiceCommand.getId()));
 
-        // make the changes
         service.setName(updateApplicationServiceCommand.getName());
         service.setCost(updateApplicationServiceCommand.getCost());
         service.setDescription(updateApplicationServiceCommand.getDescription());
 
-        // Save the updated service
         ApplicationService updatedService = applicationServiceRepository.save(service);
 
         UserResponse userResponse = UserResponse.builder()
@@ -97,7 +90,6 @@ public class ApplicationServiceController {
                 .name(updatedService.getUser().getName())
                 .build();
 
-        // Create and return a ApplicationServiceResponse based on the updated service
         ApplicationServiceAndUserResponse applicationServiceAndUserResponse = ApplicationServiceAndUserResponse.builder()
                 .id(updatedService.getId())
                 .name(updatedService.getName())

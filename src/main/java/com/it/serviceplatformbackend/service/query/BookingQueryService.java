@@ -6,7 +6,6 @@ import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.dto.ApplicationServiceAndUserResponse;
 import com.it.serviceplatformbackend.dto.BookingResponse;
 import com.it.serviceplatformbackend.dto.UserResponse;
-
 import com.it.serviceplatformbackend.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
