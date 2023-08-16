@@ -6,7 +6,6 @@ import com.it.serviceplatformbackend.domain.User;
 import com.it.serviceplatformbackend.exception.InactiveUserException;
 import com.it.serviceplatformbackend.exception.InvalidCredentialsException;
 import com.it.serviceplatformbackend.repository.UserRepository;
-import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

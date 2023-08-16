@@ -48,7 +48,6 @@ public class BookingCommandService {
     }
 
     private static CreatedBookingResponse getCreatedBookingResponse(Booking booking) {
-        // Building the response
         UserResponse userResponse = UserResponse.builder()
                 .name(booking.getUser().getName())
                 .email(booking.getUser().getEmail())

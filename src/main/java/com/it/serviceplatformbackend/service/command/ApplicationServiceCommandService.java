@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class ApplicationServiceCommandService {
     private final AuthenticationService authenticationService;
 
     private final UserRepository userRepository;
-    private  final BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
 
     public boolean deleteApplicationServiceById(Long id) {
         List<Booking> bookingsWithTheServiceToBeDeleted = bookingRepository.findByApplicationService_Id(id);
@@ -46,18 +45,15 @@ public class ApplicationServiceCommandService {
                                                                          HttpServletRequest request) {
         String email = authenticationService.getEmailFromToken(request);
 
-        // Check if the user already has a service with the given name
         if (applicationServiceRepository.findByServiceNameAndUserEmail(
                 newApplicationServiceCommand.getName(),
                 email).isPresent()) {
             throw new EntityExistsException("This user already has a service with that name");
         }
 
-        // Find the user by email
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("No user found"));
 
-        // Create the new application service
         ApplicationService newApplicationService = ApplicationService.builder()
                 .name(newApplicationServiceCommand.getName())
                 .description(newApplicationServiceCommand.getDescription())
@@ -66,10 +62,8 @@ public class ApplicationServiceCommandService {
                 .user(user)
                 .build();
 
-        // Save the new application service
         newApplicationService = applicationServiceRepository.save(newApplicationService);
 
-        // Build the response
         UserResponse serviceProvider = UserResponseBuilder(newApplicationService.getUser());
         return ApplicationServiceAndUserResponse.builder()
                 .id(newApplicationService.getId())
